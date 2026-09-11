@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secretaria Online — Portal do Funcionário</title>
+  <meta name="description" content="Protótipo da Secretaria Online da Universidade Rovuma">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">UR</div>
+        <div>
+          <strong>Universidade<br>Rovuma</strong>
+          <span>Secretaria Online</span>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <small>PORTAL DO FUNCIONÁRIO</small>
+        <nav>
+          <button class="nav-item active" data-view="dashboard"><span>⌂</span> Início</button>
+          <button class="nav-item" data-view="new"><span>＋</span> Nova solicitação</button>
+          <button class="nav-item" data-view="requests"><span>▤</span> Minhas solicitações <b class="nav-badge">4</b></button>
+          <button class="nav-item" data-view="status"><span>◷</span> Estado dos processos</button>
+        </nav>
+      </div>
+
+      <div class="nav-section">
+        <small>CONTA</small>
+        <nav>
+          <button class="nav-item" data-view="profile"><span>◉</span> Meu perfil</button>
+          <button class="nav-item" data-view="settings"><span>⚙</span> Configuração</button>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="security-note"><span>●</span><div><strong>Ambiente seguro</strong><small>Portal institucional</small></div></div>
+        <div class="mini-user"><div class="avatar">CY</div><div><strong>Cremildo Yotamo</strong><small>Funcionário</small></div><button aria-label="Mais opções">•••</button></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" id="menuBtn">☰</button>
+        <div class="breadcrumb"><span>Secretaria Online</span><i>/</i><strong id="pageCrumb">Início</strong></div>
+        <div class="top-actions">
+          <button class="icon-btn" title="Notificações">♢<em>3</em></button>
+          <div class="top-user"><div class="avatar small">CY</div><span>Cremildo Yotamo</span><span>⌄</span></div>
+        </div>
+      </header>
+
+      <section class="content">
+        <div id="view-dashboard" class="view active-view">
+          <div class="welcome">
+            <div><p class="eyebrow">PORTAL DO FUNCIONÁRIO</p><h1>Bom dia, Cremildo.</h1><p>Acompanhe os seus processos e submeta novas solicitações administrativas.</p></div>
+            <button class="primary" data-view="new">＋ Nova solicitação</button>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card"><div class="stat-icon blue">◷</div><div><span>Em análise</span><strong>2</strong><small>processos em tramitação</small></div></article>
+            <article class="stat-card"><div class="stat-icon amber">!</div><div><span>A aguardar ação</span><strong>1</strong><small>necessita da sua atenção</small></div></article>
+            <article class="stat-card"><div class="stat-icon green">✓</div><div><span>Concluídos</span><strong>8</strong><small>nos últimos 12 meses</small></div></article>
+            <article class="stat-card"><div class="stat-icon slate">↗</div><div><span>Total submetido</span><strong>11</strong><small>desde o seu registo</small></div></article>
+          </div>
+
+          <div class="section-head"><div><h2>Solicitações recentes</h2><p>Os seus processos administrativos mais recentes.</p></div><button class="text-btn" data-view="requests">Ver todas →</button></div>
+          <div class="request-table">
+            <div class="table-row table-head"><span>Processo</span><span>Tipo de solicitação</span><span>Data</span><span>Estado</span><span></span></div>
+            <div class="table-row"><span class="process-id">SOL-2026-00125</span><span><strong>Pedido de férias</strong><small>Recursos Humanos</small></span><span>10 Set 2026</span><span><b class="status-pill blue">Em análise</b></span><button class="row-action" data-open="SOL-2026-00125">Ver</button></div>
+            <div class="table-row"><span class="process-id">SOL-2026-00118</span><span><strong>Declaração de serviço</strong><small>Recursos Humanos</small></span><span>05 Set 2026</span><span><b class="status-pill green">Concluído</b></span><button class="row-action" data-open="SOL-2026-00118">Ver</button></div>
+            <div class="table-row"><span class="process-id">SOL-2026-00097</span><span><strong>Pedido de formação</strong><small>Direcção de Recursos Humanos</small></span><span>28 Ago 2026</span><span><b class="status-pill amber">A aguardar parecer</b></span><button class="row-action" data-open="SOL-2026-00097">Ver</button></div>
+          </div>
+
+          <div class="bottom-grid">
+            <article class="panel">
+              <div class="section-head compact"><div><h2>Serviços disponíveis</h2><p>Inicie um novo processo administrativo.</p></div></div>
+              <div class="service-grid">
+                <button class="service" data-service="Pedido de férias"><span>◷</span><div><strong>Pedido de férias</strong><small>Submeter período de férias</small></div><b>→</b></button>
+                <button class="service" data-service="Declaração"><span>▤</span><div><strong>Declarações</strong><small>Solicitar declaração de serviço</small></div><b>→</b></button>
+                <button class="service" data-service="Licença"><span>◌</span><div><strong>Licenças e dispensas</strong><small>Submeter pedido administrativo</small></div><b>→</b></button>
+                <button class="service" data-service="Outros"><span>＋</span><div><strong>Outros serviços</strong><small>Consultar catálogo completo</small></div><b>→</b></button>
+              </div>
+            </article>
+            <article class="panel notice-panel"><div class="notice-icon">i</div><div><h3>Tem uma solicitação pendente</h3><p>O processo <strong>SOL-2026-00097</strong> aguarda uma informação adicional. Consulte o processo para responder.</p><button class="text-btn" data-open="SOL-2026-00097">Consultar processo →</button></div></article>
+          </div>
+        </div>
+
+        <div id="view-new" class="view">
+          <div class="page-title"><div><p class="eyebrow">NOVO PROCESSO</p><h1>Nova solicitação</h1><p>Seleccione o serviço que pretende solicitar. O sistema encaminhará o processo para os responsáveis competentes.</p></div></div>
+          <div class="new-layout">
+            <div class="catalog-panel">
+              <label class="field-label">Tipo de solicitação</label>
+              <div class="service-list">
+                <button class="catalog-item selected" data-service="Pedido de férias"><span>◷</span><div><strong>Pedido de férias</strong><small>Solicitar autorização do período de férias</small></div><i>✓</i></button>
+                <button class="catalog-item" data-service="Licença"><span>◌</span><div><strong>Licença ou dispensa</strong><small>Submeter licença, dispensa ou ausência</small></div><i></i></button>
+                <button class="catalog-item" data-service="Declaração"><span>▤</span><div><strong>Declaração de serviço</strong><small>Solicitar documentos e declarações</small></div><i></i></button>
+                <button class="catalog-item" data-service="Formação"><span>◇</span><div><strong>Pedido de formação</strong><small>Solicitar participação em formação</small></div><i></i></button>
+                <button class="catalog-item" data-service="Reembolso"><span>◈</span><div><strong>Reembolso</strong><small>Submeter pedido de reembolso</small></div><i></i></button>
+                <button class="catalog-item" data-service="Outros"><span>＋</span><div><strong>Outro serviço</strong><small>Apresentar uma solicitação não listada</small></div><i></i></button>
+              </div>
+            </div>
+            <div class="form-panel">
+              <div class="form-header"><div><span class="form-icon">◷</span><div><h2 id="formTitle">Pedido de férias</h2><p id="formSubtitle">Preencha os dados do período pretendido.</p></div></div><span class="step">1 de 1</span></div>
+              <form id="requestForm">
+                <div class="form-grid">
+                  <div class="field"><label>Data de início <sup>*</sup></label><input type="date" required></div>
+                  <div class="field"><label>Data de fim <sup>*</sup></label><input type="date" required></div>
+                  <div class="field full"><label>Observação <span>(opcional)</span></label><textarea rows="4" placeholder="Acrescente alguma informação que considere relevante..."></textarea></div>
+                </div>
+                <div class="upload"><div class="upload-icon">↥</div><div><strong>Documentos comprovativos</strong><p>Arraste ficheiros para aqui ou <label for="fileInput">procure no computador</label></p><small>PDF, JPG ou PNG · Máx. 10 MB por ficheiro</small></div><input id="fileInput" type="file" hidden multiple></div>
+                <div class="routing"><span>✓</span><div><strong>Encaminhamento automático</strong><p>Depois de submetido, o pedido será encaminhado de acordo com o fluxo administrativo aplicável à sua unidade orgânica.</p></div></div>
+                <div class="form-actions"><button type="button" class="secondary" data-view="dashboard">Cancelar</button><button class="primary" type="submit">Enviar solicitação <span>→</span></button></div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div id="view-requests" class="view">
+          <div class="page-title"><div><p class="eyebrow">PROCESSOS</p><h1>Minhas solicitações</h1><p>Consulte todos os pedidos submetidos através da Secretaria Online.</p></div><button class="primary" data-view="new">＋ Nova solicitação</button></div>
+          <div class="filters"><div class="search">⌕ <input placeholder="Pesquisar por número ou tipo..."></div><select><option>Todos os estados</option><option>Em análise</option><option>Concluído</option><option>Recusado</option></select><select><option>Mais recentes</option><option>Mais antigos</option></select></div>
+          <div class="request-table full-table">
+            <div class="table-row table-head"><span>Processo</span><span>Solicitação</span><span>Submetido em</span><span>Estado</span><span>Responsável</span><span></span></div>
+            <div class="table-row"><span class="process-id">SOL-2026-00125</span><span><strong>Pedido de férias</strong><small>RH · Férias</small></span><span>10 Set 2026</span><span><b class="status-pill blue">Em análise</b></span><span>Direcção de RH</span><button class="row-action" data-open="SOL-2026-00125">Ver</button></div>
+            <div class="table-row"><span class="process-id">SOL-2026-00118</span><span><strong>Declaração de serviço</strong><small>RH · Documentação</small></span><span>05 Set 2026</span><span><b class="status-pill green">Concluído</b></span><span>Secretaria RH</span><button class="row-action" data-open="SOL-2026-00118">Ver</button></div>
+            <div class="table-row"><span class="process-id">SOL-2026-00097</span><span><strong>Pedido de formação</strong><small>Capacitação</small></span><span>28 Ago 2026</span><span><b class="status-pill amber">A aguardar parecer</b></span><span>Direcção da UO</span><button class="row-action" data-open="SOL-2026-00097">Ver</button></div>
+            <div class="table-row"><span class="process-id">SOL-2026-00061</span><span><strong>Dispensa de serviço</strong><small>RH · Dispensas</small></span><span>14 Ago 2026</span><span><b class="status-pill red">Recusado</b></span><span>Direcção da UO</span><button class="row-action" data-open="SOL-2026-00061">Ver</button></div>
+          </div>
+        </div>
+
+        <div id="view-status" class="view">
+          <div class="page-title"><div><p class="eyebrow">ACOMPANHAMENTO</p><h1>Estado dos processos</h1><p>Veja em que etapa se encontra cada solicitação.</p></div></div>
+          <div class="process-card">
+            <div class="process-top"><div><span class="process-id">SOL-2026-00125</span><h2>Pedido de férias</h2><p>Submetido em 10 de Setembro de 2026</p></div><b class="status-pill blue">Em análise</b></div>
+            <div class="timeline">
+              <div class="timeline-item done"><span>✓</span><div><strong>Solicitação enviada</strong><small>10 Set · 09:42</small></div></div>
+              <div class="timeline-item done"><span>✓</span><div><strong>Recebida pela Secretaria</strong><small>10 Set · 09:43</small></div></div>
+              <div class="timeline-item current"><span>2</span><div><strong>Em análise pela Direcção de RH</strong><small>Processo actualmente nesta etapa</small></div></div>
+              <div class="timeline-item"><span>3</span><div><strong>Parecer da Unidade Orgânica</strong><small>A aguardar</small></div></div>
+              <div class="timeline-item"><span>4</span><div><strong>Despacho / autorização</strong><small>A aguardar</small></div></div>
+              <div class="timeline-item"><span>5</span><div><strong>Concluído</strong><small>A aguardar</small></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="view-profile" class="view placeholder-view"><div class="page-title"><div><p class="eyebrow">CONTA</p><h1>Meu perfil</h1><p>Informação institucional associada à sua conta.</p></div></div><div class="profile-card"><div class="avatar large">CY</div><div><h2>Cremildo Yotamo</h2><p>Funcionário · Faculdade de Ciências Económicas e Empresariais</p><div class="profile-details"><span><small>N.º de funcionário</small><strong>UR-2024-0187</strong></span><span><small>Unidade Orgânica</small><strong>FACEE</strong></span><span><small>Departamento</small><strong>Direcção de Investigação</strong></span></div></div></div></div>
+
+        <div id="view-settings" class="view placeholder-view"><div class="page-title"><div><p class="eyebrow">CONTA</p><h1>Configuração</h1><p>Gerir preferências do portal.</p></div></div><div class="settings-card"><div class="setting-row"><div><strong>Notificações por e-mail</strong><small>Receber actualizações sobre os seus processos.</small></div><label class="switch"><input type="checkbox" checked><span></span></label></div><div class="setting-row"><div><strong>Notificações no portal</strong><small>Mostrar alertas e novas mensagens.</small></div><label class="switch"><input type="checkbox" checked><span></span></label></div><div class="setting-row"><div><strong>Idioma</strong><small>Idioma utilizado na interface.</small></div><select><option>Português (Portugal)</option></select></div></div></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="processModal"><div class="modal-backdrop"></div><div class="modal-card"><button class="modal-close" id="modalClose">×</button><p class="eyebrow">DETALHE DO PROCESSO</p><span class="process-id" id="modalId">SOL-2026-00125</span><h2 id="modalTitle">Pedido de férias</h2><p id="modalDesc">Processo administrativo em tramitação.</p><div class="modal-status"><b class="status-pill blue">Em análise</b><span>Actualizado hoje</span></div><div class="mini-timeline"><div class="done">✓ <span>Pedido submetido</span></div><div class="done">✓ <span>Recebido pela Secretaria</span></div><div class="current">● <span>Em análise</span></div><div>○ <span>Despacho / autorização</span></div></div><button class="primary full" id="modalAction">Ver acompanhamento completo</button></div></div>
+  <div class="toast" id="toast"><span>✓</span><div><strong>Solicitação enviada</strong><small>O processo foi registado com sucesso.</small></div></div>
+  <script src="assets/app.js"></script>
+</body>
+</html>
