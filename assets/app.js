@@ -1,60 +1,39 @@
-const views=["dashboard","new","requests","status","profile","settings"];
-const labels={dashboard:"Início",new:"Nova solicitação",requests:"Minhas solicitações",status:"Estado dos processos",profile:"Meu perfil",settings:"Configuração"};
-const state={service:"Pedido de férias"};
-const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-
-function go(view){
-  views.forEach(v=>{const el=$("#view-"+v); if(el) el.classList.toggle("active-view",v===view)});
-  $$(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
-  $("#pageCrumb").textContent=labels[view]||"Início";
-  window.scrollTo({top:0,behavior:"smooth"});
-  $("#sidebar").classList.remove("open");
-}
-document.addEventListener("click",e=>{
-  const nav=e.target.closest("[data-view]");
-  if(nav) go(nav.dataset.view);
-  const open=e.target.closest("[data-open]");
-  if(open) openModal(open.dataset.open);
-  const svc=e.target.closest("[data-service]");
-  if(svc){state.service=svc.dataset.service; selectService(state.service)}
-});
-$("#menuBtn").onclick=()=>$("#sidebar").classList.toggle("open");
-$("#modalClose").onclick=closeModal;
-$(".modal-backdrop").onclick=closeModal;
-function openModal(id){
-  const data={
-    "SOL-2026-00125":["SOL-2026-00125","Pedido de férias","Pedido submetido em 10 de Setembro de 2026."],
-    "SOL-2026-00118":["SOL-2026-00118","Declaração de serviço","Documento emitido e processo concluído."],
-    "SOL-2026-00097":["SOL-2026-00097","Pedido de formação","O processo aguarda parecer da Unidade Orgânica."],
-    "SOL-2026-00061":["SOL-2026-00061","Dispensa de serviço","Processo encerrado após decisão desfavorável."]
-  }[id]||[id,"Solicitação","Processo administrativo."];
-  $("#modalId").textContent=data[0];$("#modalTitle").textContent=data[1];$("#modalDesc").textContent=data[2];
-  $("#processModal").classList.add("show");
-}
-function closeModal(){$("#processModal").classList.remove("show")}
-function selectService(service){
-  $$(".catalog-item").forEach(x=>x.classList.toggle("selected",x.dataset.service===service));
-  $("#formTitle").textContent=service;
-  const subtitles={
-    "Pedido de férias":"Preencha os dados do período pretendido.",
-    "Licença":"Indique o tipo e o período da licença pretendida.",
-    "Declaração":"Seleccione o documento ou declaração que necessita.",
-    "Formação":"Indique a formação pretendida e a respectiva fundamentação.",
-    "Reembolso":"Apresente os dados e documentos do pedido de reembolso.",
-    "Outros":"Descreva a solicitação que pretende apresentar."
-  };
-  $("#formSubtitle").textContent=subtitles[service]||"Preencha os dados da sua solicitação.";
-}
-$("#requestForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  const toast=$("#toast");toast.classList.add("show");
-  setTimeout(()=>{toast.classList.remove("show");go("requests")},1800);
-});
-$("#modalAction").onclick=()=>{closeModal();go("status")};
-$("#fileInput").addEventListener("change",e=>{
-  if(e.target.files.length){
-    const p=e.target.closest(".upload").querySelector("p");
-    p.innerHTML=`<strong>${e.target.files.length} ficheiro(s) seleccionado(s)</strong>`;
-  }
-});
-selectService("Pedido de férias");
+/* Dados de demonstração isolados da interface: prontos para futura API. */
+const profiles={
+ student:{name:"Estudante",role:"Solicitante · Nível I",unit:"FACEE",initials:"ES",level:1},
+ director:{name:"Director da FACEE",role:"Parecer · Nível II",unit:"FACEE",initials:"DF",level:2},
+ deputy:{name:"Director Adjunto Pedagógico",role:"Parecer · Nível II",unit:"FACEE",initials:"DA",level:2},
+ chief:{name:"Chefe de Departamento",role:"Parecer · Nível II",unit:"FACEE",initials:"CD",level:2},
+ course:{name:"Director do Curso",role:"Parecer · Nível II",unit:"FACEE",initials:"DC",level:2},
+ office:{name:"Gabinete do Reitor",role:"Coordenação da Reitoria",unit:"Reitoria",initials:"GR",level:2},
+ rector:{name:"Reitor",role:"Autorização · Nível III",unit:"Reitoria",initials:"RE",level:3},
+ secretary:{name:"Secretaria da Reitoria",role:"Recepção e notificação",unit:"Reitoria",initials:"SR",level:2}
+};
+const process={id:"EXP-2026-00125",applicant:"Estudante",subject:"Exposição / Pedido dirigido ao Reitor",origin:"FACEE",date:"10 Set 2026",documents:["Exposição dirigida ao Reitor.pdf","Comprovativo de matrícula.pdf"], opinions:[['FACEE','Parecer recebido','done'],['Direcção de Recursos Humanos','Parecer recebido','done'],['Direcção de Finanças','A aguardar','waiting'],['Faculdade de Direito','Parecer recebido','done']]};
+const units=["FACEE","Faculdade de Ciências de Saúde","Faculdade de Direito","Direcção de Recursos Humanos","Direcção de Finanças","Instituto / Direcção / Departamento","Outra Unidade Orgânica"];
+let state={profile:"student",view:"dashboard",accepted:false}; const $=s=>document.querySelector(s);
+const nav=[['dashboard','⌂','Início'],['new','＋','Nova solicitação'],['requests','▤','Minhas solicitações'],['status','◷','Estado do processo'],['opinions','◈','Pareceres'],['authorizations','✓','Autorizações']];
+function active(){return profiles[state.profile]} function can(key){return key!=='opinions'||active().level>=2} function escape(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function setup(){const select=$('#profileSelect');select.innerHTML=Object.entries(profiles).map(([id,p])=>`<option value="${id}">👤 ${p.name}</option>`).join('');select.value=state.profile;select.onchange=e=>{state.profile=e.target.value;state.view='dashboard';state.accepted=false;render()};$('#menuBtn').onclick=()=>$('#sidebar').classList.toggle('open');$('.modal-backdrop').onclick=closeModal;render()}
+function render(){const p=active();$('#profileLevel').textContent=p.role;['sideAvatar','topAvatar'].forEach(id=>$('#'+id).textContent=p.initials);$('#sideName').textContent=p.name;$('#topName').textContent=p.name;$('#sideRole').textContent=p.unit;renderNav();const page={dashboard:'Início',new:'Nova solicitação',requests:'Minhas solicitações',status:'Estado do processo',opinions:'Pareceres',authorizations:'Autorizações'}[state.view];$('#pageCrumb').textContent=page;$('#app').innerHTML=views[state.view]();bind()}
+function renderNav(){$('#mainNav').innerHTML=nav.filter(n=>can(n[0])&&(n[0]!=='authorizations'||active().level===3)).map(n=>`<button class="nav-item ${state.view===n[0]?'active':''}" data-view="${n[0]}"><span>${n[1]}</span>${n[2]}${n[0]==='opinions'&&active().level>=2?'<b class="nav-badge">1</b>':''}</button>`).join('')}
+const header=(eyebrow,title,text,action='')=>`<div class="page-title"><div><p class="eyebrow">${eyebrow}</p><h1>${title}</h1><p>${text}</p></div>${action}</div>`;
+const processSummary=()=>`<div class="process-summary"><div><span class="process-id">${process.id}</span><h2>${process.subject}</h2><p>${process.applicant} · Unidade de origem: ${process.origin} · ${process.date}</p></div><b class="status-pill ${state.profile==='student'?'green':'blue'}">${state.profile==='student'?'Concluído':'Em tramitação'}</b></div>`;
+const timeline=()=>`<div class="timeline"><p class="timeline-date">10 SET 2026 · PERCURSO DO PROCESSO</p>${[['Solicitação submetida','Estudante','done'],['Registada pela Secretaria','Secretaria da Reitoria','done'],['Recebida pelo Gabinete do Reitor','Reitoria','done'],['Parecer solicitado à FACEE','Unidade Orgânica','done'],['Director da FACEE','Tramitação interna da unidade','done'],['Director Adjunto Pedagógico','Parecer especializado','done'],['Chefe de Departamento','Análise académica',state.profile==='student'?'done':'current'],['Director do Curso','Análise e emissão de parecer',state.profile==='student'?'done':''],['Parecer emitido','Retorno pela cadeia hierárquica',state.profile==='student'?'done':''],['Despacho do Reitor','Decisão final',state.profile==='student'?'done':''],['Processo concluído','Secretaria notificou o estudante',state.profile==='student'?'done':'']].map(([t,s,c],i)=>`<div class="timeline-item ${c}"><span>${c==='done'?'✓':c==='current'?'●':i+1}</span><div><strong>${t}</strong><small>${s}${c==='current'?' · O processo encontra-se aqui':''}</small></div></div>`).join('')}</div>`;
+const views={
+ dashboard:()=>{const p=active();let title=p.level===3?'Processos aguardando decisão':p.level===2?'Processos que aguardam a minha intervenção':'Olá, Estudante.';let text=p.level===3?'Consulte pareceres, documentos e decida os processos submetidos à Reitoria.':p.level===2?'Há um processo em tramitação que requer a sua análise institucional.':'Acompanhe a exposição submetida à Reitoria e consulte a decisão final.';return header('PAINEL DE DEMONSTRAÇÃO',title,text,`<button class="primary" data-view="${p.level===3?'authorizations':p.level===2?'opinions':'new'}">${p.level===3?'Ver autorizações':p.level===2?'Ver pareceres':'＋ Nova solicitação'}</button>`)+`<div class="stats-grid"><article class="stat-card"><div class="stat-icon blue">◷</div><div><span>Em tramitação</span><strong>1</strong><small>processo demonstrativo</small></div></article><article class="stat-card"><div class="stat-icon amber">!</div><div><span>A aguardar acção</span><strong>${p.level>1?'1':'0'}</strong><small>na sua área de trabalho</small></div></article><article class="stat-card"><div class="stat-icon green">✓</div><div><span>Pareceres recebidos</span><strong>3</strong><small>de 4 unidades consultadas</small></div></article><article class="stat-card"><div class="stat-icon slate">⌁</div><div><span>Unidades envolvidas</span><strong>4</strong><small>fluxo escalonável</small></div></article></div><section class="panel">${processSummary()}<div class="detail-actions"><button class="secondary" data-open-process>Consultar processo</button>${p.level>=2?'<button class="primary" data-view="opinions">Intervir no processo</button>':''}</div></section>`},
+ new:()=>header('NOVO PROCESSO','Nova solicitação','Submeta uma exposição, anexe documentos e receba um protocolo digital.')+`<div class="form-panel request-form"><div class="form-header"><div><span class="form-icon">＋</span><div><h2>Exposição dirigida ao Reitor</h2><p>O encaminhamento será registado no histórico do processo.</p></div></div><span class="step">DADOS FICTÍCIOS</span></div><form id="requestForm"><div class="form-grid"><div class="field full"><label>Assunto <sup>*</sup></label><input value="Exposição / Pedido dirigido ao Reitor"></div><div class="field full"><label>Exposição <sup>*</sup></label><textarea rows="5">Exposição dirigida ao Magnífico Reitor.</textarea></div></div><div class="upload"><div class="upload-icon">↥</div><div><strong>Documentos comprovativos</strong><p>Anexe a exposição e documentos de suporte.</p><small>PDF, JPG ou PNG · Máx. 10 MB por ficheiro</small></div></div><div class="form-actions"><button class="primary">Enviar solicitação →</button></div></form></div>`,
+ requests:()=>header('PROCESSOS','Minhas solicitações','Consulte os pedidos submetidos através da Secretaria Online.',active().level===1?'<button class="primary" data-view="new">＋ Nova solicitação</button>':'')+`<div class="request-table full-table"><div class="table-row table-head"><span>Processo</span><span>Assunto</span><span>Data</span><span>Estado</span><span>Unidade actual</span><span></span></div><div class="table-row"><span class="process-id">${process.id}</span><span><strong>${process.subject}</strong><small>Exposição dirigida ao Reitor</small></span><span>${process.date}</span><span><b class="status-pill ${active().level===1?'green':'blue'}">${active().level===1?'Concluído':'Em tramitação'}</b></span><span>${active().level===1?'Despacho disponível':'FACEE · Chefe de Departamento'}</span><button class="row-action" data-open-process>Ver</button></div></div>`,
+ status:()=>header('ACOMPANHAMENTO','Onde está o processo?','A timeline mostra, de forma auditável, cada passagem do processo.')+`<section class="process-card">${processSummary()}${timeline()}</section>`,
+ opinions:()=>opinionsView(), authorizations:()=>authorizationView()
+};
+function actionCard(title,copy,actions){return `<section class="panel action-panel"><h2>${title}</h2><p>${copy}</p><div class="detail-actions">${actions}</div></section>`}
+function opinionsView(){const id=state.profile;let body='';if(id==='office') body=`${actionCard('Acção sobre o processo','Faça a triagem antes de solicitar pareceres às Unidades Orgânicas.',`<button class="secondary" data-toast="Processo devolvido para esclarecimento.">Recusar / Devolver</button><button class="primary" data-accept>${state.accepted?'Processo aceite ✓':'Aceitar processo'}</button>`)}${state.accepted?unitSelector():''}<section class="panel"><h2>Pareceres recebidos</h2><p class="section-copy">A consolidação é feita por Unidade Orgânica, nunca por funcionário individual.</p>${opinionsTable()}<div class="detail-actions"><button class="secondary" data-open-process>Consultar documentos</button><button class="primary" data-toast="Processo encaminhado para o Reitor.">Encaminhar para o Reitor</button></div></section>`;else if(id==='course')body=intervention('Parecer solicitado pelo Chefe de Departamento.','Analise os documentos e envie o parecer ao Chefe de Departamento.',`<button class="secondary" data-toast="Documento anexado ao processo.">Anexar documento</button><button class="primary" data-toast="Parecer emitido e enviado ao Chefe de Departamento.">Emitir parecer</button>`);else {const next={director:'Director Adjunto Pedagógico',deputy:'Chefe de Departamento',chief:'Director do Curso',secretary:'Gabinete do Reitor'}[id]||'Director Adjunto Pedagógico';body=intervention(id==='director'?'Parecer solicitado pelo Gabinete do Reitor à FACEE.':`Parecer solicitado pela Direcção da Faculdade.`,`O processo entrou pela Unidade Orgânica FACEE. Encaminhe internamente para a função competente: ${next}.`,`<button class="secondary" data-toast="Processo devolvido para esclarecimento.">Devolver</button><button class="secondary" data-toast="Parecer registado no processo.">Emitir parecer</button><button class="primary" data-toast="Processo encaminhado para ${next}.">Encaminhar para parecer</button>`)}return header('PARECERES','Processos que aguardam a minha intervenção','A tramitação interna respeita a hierarquia configurável da Unidade Orgânica.')+body}
+function intervention(note,copy,actions){return `<section class="intervention-card">${processSummary()}<div class="intervention-meta"><span><b>Solicitado por</b> ${state.profile==='director'?'Gabinete do Reitor':'Direcção da Faculdade'}</span><span><b>Recepção</b> 10 Set 2026</span><span><b>Prazo</b> 17 Set 2026</span><span><b>Documentos</b> ${process.documents.length} anexos</span></div><div class="callout"><strong>${note}</strong><p>${copy}</p></div><div class="detail-actions">${actions}<button class="text-btn" data-open-process>Ver histórico →</button></div></section>`}
+function opinionsTable(){return `<div class="opinion-table"><div class="opinion-row head"><span>Entidade</span><span>Estado</span><span>Acção</span></div>${process.opinions.map(x=>`<div class="opinion-row"><strong>${x[0]}</strong><span class="opinion-status ${x[2]}">${x[2]==='done'?'✓':'◷'} ${x[1]}</span><button class="text-btn" data-toast="Parecer de ${escape(x[0])} aberto.">Consultar</button></div>`).join('')}</div>`}
+function unitSelector(){return `<section class="panel selector-card"><h2>Entidades das quais pretende parecer</h2><p class="section-copy">Seleccione uma ou várias Unidades Orgânicas. O pedido é entregue à unidade, que decide o encaminhamento interno.</p><div class="unit-grid">${units.map((u,i)=>`<label><input type="checkbox" ${i===0?'checked':''}> <span>${u}</span></label>`).join('')}</div><div class="detail-actions"><button class="primary" data-toast="Pedido de parecer enviado às Unidades Orgânicas seleccionadas.">Solicitar parecer</button></div></section>`}
+function authorizationView(){return header('AUTORIZAÇÕES','Processos aguardando decisão','Consulte os pareceres consolidados e emita o despacho final.')+`<section class="intervention-card">${processSummary()}<div class="intervention-meta"><span><b>Pareceres recebidos</b> 3 de 4</span><span><b>Pendentes</b> Direcção de Finanças</span><span><b>Documentos</b> ${process.documents.length} anexos</span></div>${opinionsTable()}<div class="detail-actions"><button class="secondary" data-toast="Pedido devolvido para esclarecimento.">Devolver</button><button class="secondary" data-toast="Pedido de parecer adicional aberto.">Solicitar parecer adicional</button><button class="secondary" data-toast="Decisão de recusa preparada.">Recusar</button><button class="primary" data-decision>Autorizar</button></div></section>`}
+function openModal(){const docs=process.documents.map(d=>`<li>▤ ${d}</li>`).join('');$('#modalContent').innerHTML=`<button class="modal-close" data-close>×</button><p class="eyebrow">DETALHE DO PROCESSO</p>${processSummary()}<div class="modal-section"><h3>Documentos</h3><ul class="document-list">${docs}</ul></div><div class="modal-section"><h3>Histórico de tramitação</h3>${timeline()}</div>`;$('#modal').classList.add('show')}
+function decisionModal(){$('#modalContent').innerHTML=`<button class="modal-close" data-close>×</button><p class="eyebrow">DECISÃO DO REITOR</p><h2>Autorizar processo</h2><p>Emita o despacho que seguirá pelo Gabinete e pela Secretaria até ao requerente.</p><div class="field"><label>Despacho / decisão</label><textarea rows="5" placeholder="Registe o despacho do Magnífico Reitor..."></textarea></div><div class="upload"><div class="upload-icon">↥</div><div><strong>Anexar documento assinado</strong><p>Opcional para a demonstração.</p></div></div><div class="detail-actions"><button class="primary" data-toast="Despacho emitido. Processo devolvido à Secretaria para notificação.">Emitir despacho</button></div>`;$('#modal').classList.add('show')}
+function closeModal(){$('#modal').classList.remove('show')}; function toast(message){$('#toast').innerHTML=`<span>✓</span><div><strong>${message}</strong><small>Acção simulada no protótipo.</small></div>`;$('#toast').classList.add('show');setTimeout(()=>$('#toast').classList.remove('show'),3400)}
+function bind(){document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{state.view=b.dataset.view;render()});document.querySelectorAll('[data-open-process]').forEach(b=>b.onclick=openModal);document.querySelectorAll('[data-toast]').forEach(b=>b.onclick=()=>toast(b.dataset.toast));document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeModal);const a=$('[data-accept]');if(a)a.onclick=()=>{state.accepted=true;render()};const d=$('[data-decision]');if(d)d.onclick=decisionModal;const f=$('#requestForm');if(f)f.onsubmit=e=>{e.preventDefault();toast(`Protocolo digital ${process.id} registado com sucesso.`);state.view='status';setTimeout(render,600)}} setup();
