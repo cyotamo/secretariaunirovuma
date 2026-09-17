@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Secretaria Online — Universidade Rovuma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<svg class="svg-defs" aria-hidden="true">
+  <symbol id="home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM9 21v-7h6v7"/></symbol>
+  <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></symbol>
+  <symbol id="bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+  <symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 15a2 2 0 0 0 .4 2l.1.1-2 2-.1-.1a2 2 0 0 0-2-.4 2 2 0 0 0-1.2 1.7V20h-3v-.1a2 2 0 0 0-1.2-1.7 2 2 0 0 0-2 .4l-.1.1-2-2 .1-.1a2 2 0 0 0 .4-2 2 2 0 0 0-1.7-1.2H5v-3h.1a2 2 0 0 0 1.7-1.2 2 2 0 0 0-.4-2l-.1-.1 2-2 .1.1a2 2 0 0 0 2 .4A2 2 0 0 0 11.5 4V4h3v.1a2 2 0 0 0 1.2 1.7 2 2 0 0 0 2-.4l.1-.1 2 2-.1.1a2 2 0 0 0-.4 2 2 2 0 0 0 1.7 1.2h.1v3h-.1A2 2 0 0 0 19 15z"/></symbol>
+  <symbol id="eye" viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+  <symbol id="chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h5"/></symbol>
+  <symbol id="send" viewBox="0 0 24 24"><path d="m4 4 16 8-16 8 3-8zM7 12h13"/></symbol>
+  <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  <symbol id="back" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></symbol>
+  <symbol id="menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+</svg>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brand-mark">UR</div><div><strong>Universidade Rovuma</strong><span>Secretaria Online</span></div></div>
+    <div class="nav-label">MENU</div>
+    <nav id="nav"></nav>
+    <div class="sidebar-bottom">
+      <div class="demo-label">UTILIZADOR DE DEMONSTRAÇÃO</div>
+      <div class="user-card"><div class="avatar" id="sideAvatar">ES</div><div><strong id="sideName">Estudante</strong><small id="sideRole">Nível I</small></div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-button" id="menuButton"><svg><use href="#menu"/></svg></button>
+      <div class="crumb"><span>Secretaria Online</span><b>/</b><strong id="crumb">Início</strong></div>
+      <div class="top-right">
+        <button class="bell"><svg><use href="#bell"/></svg><em>2</em></button>
+        <div class="profile-switch">
+          <div class="avatar small" id="topAvatar">ES</div>
+          <select id="profileSelect" aria-label="Simular utilizador"></select>
+        </div>
+      </div>
+    </header>
+
+    <section class="content" id="app"></section>
+  </main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-bg"></div>
+  <div class="modal-panel" id="modalPanel"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="assets/app.js"></script>
+</body>
+</html>
