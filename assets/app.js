@@ -1,39 +1,376 @@
 /* Dados de demonstração isolados da interface: prontos para futura API. */
-const profiles={
- student:{name:"Estudante",role:"Solicitante · Nível I",unit:"FACEE",initials:"ES",level:1},
- director:{name:"Director da FACEE",role:"Parecer · Nível II",unit:"FACEE",initials:"DF",level:2},
- deputy:{name:"Director Adjunto Pedagógico",role:"Parecer · Nível II",unit:"FACEE",initials:"DA",level:2},
- chief:{name:"Chefe de Departamento",role:"Parecer · Nível II",unit:"FACEE",initials:"CD",level:2},
- course:{name:"Director do Curso",role:"Parecer · Nível II",unit:"FACEE",initials:"DC",level:2},
- office:{name:"Gabinete do Reitor",role:"Coordenação da Reitoria",unit:"Reitoria",initials:"GR",level:2},
- rector:{name:"Reitor",role:"Autorização · Nível III",unit:"Reitoria",initials:"RE",level:3},
- secretary:{name:"Secretaria da Reitoria",role:"Recepção e notificação",unit:"Reitoria",initials:"SR",level:2}
+const profiles = {
+  student: {
+    name: "Estudante",
+    role: "Solicitante · Nível I",
+    unit: "FACEE",
+    initials: "ES",
+    level: 1,
+  },
+  director: {
+    name: "Director da FACEE",
+    role: "Parecer · Nível II",
+    unit: "FACEE",
+    initials: "DF",
+    level: 2,
+  },
+  deputy: {
+    name: "Director Adjunto Pedagógico",
+    role: "Parecer · Nível II",
+    unit: "FACEE",
+    initials: "DA",
+    level: 2,
+  },
+  chief: {
+    name: "Chefe de Departamento",
+    role: "Parecer · Nível II",
+    unit: "FACEE",
+    initials: "CD",
+    level: 2,
+  },
+  course: {
+    name: "Director do Curso",
+    role: "Parecer · Nível II",
+    unit: "FACEE",
+    initials: "DC",
+    level: 2,
+  },
+  office: {
+    name: "Gabinete do Reitor",
+    role: "Coordenação da Reitoria",
+    unit: "Reitoria",
+    initials: "GR",
+    level: 2,
+  },
+  rector: {
+    name: "Reitor",
+    role: "Autorização · Nível III",
+    unit: "Reitoria",
+    initials: "RE",
+    level: 3,
+  },
+  secretary: {
+    name: "Secretaria da Reitoria",
+    role: "Recepção e notificação",
+    unit: "Reitoria",
+    initials: "SR",
+    level: 2,
+  },
 };
-const process={id:"EXP-2026-00125",applicant:"Estudante",subject:"Exposição / Pedido dirigido ao Reitor",origin:"FACEE",date:"10 Set 2026",documents:["Exposição dirigida ao Reitor.pdf","Comprovativo de matrícula.pdf"], opinions:[['FACEE','Parecer recebido','done'],['Direcção de Recursos Humanos','Parecer recebido','done'],['Direcção de Finanças','A aguardar','waiting'],['Faculdade de Direito','Parecer recebido','done']]};
-const units=["FACEE","Faculdade de Ciências de Saúde","Faculdade de Direito","Direcção de Recursos Humanos","Direcção de Finanças","Instituto / Direcção / Departamento","Outra Unidade Orgânica"];
-let state={profile:"student",view:"dashboard",accepted:false}; const $=s=>document.querySelector(s);
-const nav=[['dashboard','⌂','Início'],['new','＋','Nova solicitação'],['requests','▤','Minhas solicitações'],['status','◷','Estado do processo'],['opinions','◈','Pareceres'],['authorizations','✓','Autorizações']];
-function active(){return profiles[state.profile]} function can(key){return key!=='opinions'||active().level>=2} function escape(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
-function setup(){const select=$('#profileSelect');select.innerHTML=Object.entries(profiles).map(([id,p])=>`<option value="${id}">👤 ${p.name}</option>`).join('');select.value=state.profile;select.onchange=e=>{state.profile=e.target.value;state.view='dashboard';state.accepted=false;render()};$('#menuBtn').onclick=()=>$('#sidebar').classList.toggle('open');$('.modal-backdrop').onclick=closeModal;render()}
-function render(){const p=active();$('#profileLevel').textContent=p.role;['sideAvatar','topAvatar'].forEach(id=>$('#'+id).textContent=p.initials);$('#sideName').textContent=p.name;$('#topName').textContent=p.name;$('#sideRole').textContent=p.unit;renderNav();const page={dashboard:'Início',new:'Nova solicitação',requests:'Minhas solicitações',status:'Estado do processo',opinions:'Pareceres',authorizations:'Autorizações'}[state.view];$('#pageCrumb').textContent=page;$('#app').innerHTML=views[state.view]();bind()}
-function renderNav(){$('#mainNav').innerHTML=nav.filter(n=>can(n[0])&&(n[0]!=='authorizations'||active().level===3)).map(n=>`<button class="nav-item ${state.view===n[0]?'active':''}" data-view="${n[0]}"><span>${n[1]}</span>${n[2]}${n[0]==='opinions'&&active().level>=2?'<b class="nav-badge">1</b>':''}</button>`).join('')}
-const header=(eyebrow,title,text,action='')=>`<div class="page-title"><div><p class="eyebrow">${eyebrow}</p><h1>${title}</h1><p>${text}</p></div>${action}</div>`;
-const processSummary=()=>`<div class="process-summary"><div><span class="process-id">${process.id}</span><h2>${process.subject}</h2><p>${process.applicant} · Unidade de origem: ${process.origin} · ${process.date}</p></div><b class="status-pill ${state.profile==='student'?'green':'blue'}">${state.profile==='student'?'Concluído':'Em tramitação'}</b></div>`;
-const timeline=()=>`<div class="timeline"><p class="timeline-date">10 SET 2026 · PERCURSO DO PROCESSO</p>${[['Solicitação submetida','Estudante','done'],['Registada pela Secretaria','Secretaria da Reitoria','done'],['Recebida pelo Gabinete do Reitor','Reitoria','done'],['Parecer solicitado à FACEE','Unidade Orgânica','done'],['Director da FACEE','Tramitação interna da unidade','done'],['Director Adjunto Pedagógico','Parecer especializado','done'],['Chefe de Departamento','Análise académica',state.profile==='student'?'done':'current'],['Director do Curso','Análise e emissão de parecer',state.profile==='student'?'done':''],['Parecer emitido','Retorno pela cadeia hierárquica',state.profile==='student'?'done':''],['Despacho do Reitor','Decisão final',state.profile==='student'?'done':''],['Processo concluído','Secretaria notificou o estudante',state.profile==='student'?'done':'']].map(([t,s,c],i)=>`<div class="timeline-item ${c}"><span>${c==='done'?'✓':c==='current'?'●':i+1}</span><div><strong>${t}</strong><small>${s}${c==='current'?' · O processo encontra-se aqui':''}</small></div></div>`).join('')}</div>`;
-const views={
- dashboard:()=>{const p=active();let title=p.level===3?'Processos aguardando decisão':p.level===2?'Processos que aguardam a minha intervenção':'Olá, Estudante.';let text=p.level===3?'Consulte pareceres, documentos e decida os processos submetidos à Reitoria.':p.level===2?'Há um processo em tramitação que requer a sua análise institucional.':'Acompanhe a exposição submetida à Reitoria e consulte a decisão final.';return header('PAINEL DE DEMONSTRAÇÃO',title,text,`<button class="primary" data-view="${p.level===3?'authorizations':p.level===2?'opinions':'new'}">${p.level===3?'Ver autorizações':p.level===2?'Ver pareceres':'＋ Nova solicitação'}</button>`)+`<div class="stats-grid"><article class="stat-card"><div class="stat-icon blue">◷</div><div><span>Em tramitação</span><strong>1</strong><small>processo demonstrativo</small></div></article><article class="stat-card"><div class="stat-icon amber">!</div><div><span>A aguardar acção</span><strong>${p.level>1?'1':'0'}</strong><small>na sua área de trabalho</small></div></article><article class="stat-card"><div class="stat-icon green">✓</div><div><span>Pareceres recebidos</span><strong>3</strong><small>de 4 unidades consultadas</small></div></article><article class="stat-card"><div class="stat-icon slate">⌁</div><div><span>Unidades envolvidas</span><strong>4</strong><small>fluxo escalonável</small></div></article></div><section class="panel">${processSummary()}<div class="detail-actions"><button class="secondary" data-open-process>Consultar processo</button>${p.level>=2?'<button class="primary" data-view="opinions">Intervir no processo</button>':''}</div></section>`},
- new:()=>header('NOVO PROCESSO','Nova solicitação','Submeta uma exposição, anexe documentos e receba um protocolo digital.')+`<div class="form-panel request-form"><div class="form-header"><div><span class="form-icon">＋</span><div><h2>Exposição dirigida ao Reitor</h2><p>O encaminhamento será registado no histórico do processo.</p></div></div><span class="step">DADOS FICTÍCIOS</span></div><form id="requestForm"><div class="form-grid"><div class="field full"><label>Assunto <sup>*</sup></label><input value="Exposição / Pedido dirigido ao Reitor"></div><div class="field full"><label>Exposição <sup>*</sup></label><textarea rows="5">Exposição dirigida ao Magnífico Reitor.</textarea></div></div><div class="upload"><div class="upload-icon">↥</div><div><strong>Documentos comprovativos</strong><p>Anexe a exposição e documentos de suporte.</p><small>PDF, JPG ou PNG · Máx. 10 MB por ficheiro</small></div></div><div class="form-actions"><button class="primary">Enviar solicitação →</button></div></form></div>`,
- requests:()=>header('PROCESSOS','Minhas solicitações','Consulte os pedidos submetidos através da Secretaria Online.',active().level===1?'<button class="primary" data-view="new">＋ Nova solicitação</button>':'')+`<div class="request-table full-table"><div class="table-row table-head"><span>Processo</span><span>Assunto</span><span>Data</span><span>Estado</span><span>Unidade actual</span><span></span></div><div class="table-row"><span class="process-id">${process.id}</span><span><strong>${process.subject}</strong><small>Exposição dirigida ao Reitor</small></span><span>${process.date}</span><span><b class="status-pill ${active().level===1?'green':'blue'}">${active().level===1?'Concluído':'Em tramitação'}</b></span><span>${active().level===1?'Despacho disponível':'FACEE · Chefe de Departamento'}</span><button class="row-action" data-open-process>Ver</button></div></div>`,
- status:()=>header('ACOMPANHAMENTO','Onde está o processo?','A timeline mostra, de forma auditável, cada passagem do processo.')+`<section class="process-card">${processSummary()}${timeline()}</section>`,
- opinions:()=>opinionsView(), authorizations:()=>authorizationView()
+const process = {
+  id: "EXP-2026-00125",
+  applicant: "Estudante",
+  subject: "Exposição / Pedido dirigido ao Reitor",
+  origin: "FACEE",
+  date: "10 Setembro 2026",
+  documents: [
+    "Exposição dirigida ao Reitor.pdf",
+    "Comprovativo de matrícula.pdf",
+  ],
+  opinions: [
+    ["FACEE", "Parecer recebido", "done"],
+    ["Direcção de Recursos Humanos", "Parecer recebido", "done"],
+    ["Direcção de Finanças", "A aguardar", "waiting"],
+    ["Faculdade de Direito", "Parecer recebido", "done"],
+  ],
 };
-function actionCard(title,copy,actions){return `<section class="panel action-panel"><h2>${title}</h2><p>${copy}</p><div class="detail-actions">${actions}</div></section>`}
-function opinionsView(){const id=state.profile;let body='';if(id==='office') body=`${actionCard('Acção sobre o processo','Faça a triagem antes de solicitar pareceres às Unidades Orgânicas.',`<button class="secondary" data-toast="Processo devolvido para esclarecimento.">Recusar / Devolver</button><button class="primary" data-accept>${state.accepted?'Processo aceite ✓':'Aceitar processo'}</button>`)}${state.accepted?unitSelector():''}<section class="panel"><h2>Pareceres recebidos</h2><p class="section-copy">A consolidação é feita por Unidade Orgânica, nunca por funcionário individual.</p>${opinionsTable()}<div class="detail-actions"><button class="secondary" data-open-process>Consultar documentos</button><button class="primary" data-toast="Processo encaminhado para o Reitor.">Encaminhar para o Reitor</button></div></section>`;else if(id==='course')body=intervention('Parecer solicitado pelo Chefe de Departamento.','Analise os documentos e envie o parecer ao Chefe de Departamento.',`<button class="secondary" data-toast="Documento anexado ao processo.">Anexar documento</button><button class="primary" data-toast="Parecer emitido e enviado ao Chefe de Departamento.">Emitir parecer</button>`);else {const next={director:'Director Adjunto Pedagógico',deputy:'Chefe de Departamento',chief:'Director do Curso',secretary:'Gabinete do Reitor'}[id]||'Director Adjunto Pedagógico';body=intervention(id==='director'?'Parecer solicitado pelo Gabinete do Reitor à FACEE.':`Parecer solicitado pela Direcção da Faculdade.`,`O processo entrou pela Unidade Orgânica FACEE. Encaminhe internamente para a função competente: ${next}.`,`<button class="secondary" data-toast="Processo devolvido para esclarecimento.">Devolver</button><button class="secondary" data-toast="Parecer registado no processo.">Emitir parecer</button><button class="primary" data-toast="Processo encaminhado para ${next}.">Encaminhar para parecer</button>`)}return header('PARECERES','Processos que aguardam a minha intervenção','A tramitação interna respeita a hierarquia configurável da Unidade Orgânica.')+body}
-function intervention(note,copy,actions){return `<section class="intervention-card">${processSummary()}<div class="intervention-meta"><span><b>Solicitado por</b> ${state.profile==='director'?'Gabinete do Reitor':'Direcção da Faculdade'}</span><span><b>Recepção</b> 10 Set 2026</span><span><b>Prazo</b> 17 Set 2026</span><span><b>Documentos</b> ${process.documents.length} anexos</span></div><div class="callout"><strong>${note}</strong><p>${copy}</p></div><div class="detail-actions">${actions}<button class="text-btn" data-open-process>Ver histórico →</button></div></section>`}
-function opinionsTable(){return `<div class="opinion-table"><div class="opinion-row head"><span>Entidade</span><span>Estado</span><span>Acção</span></div>${process.opinions.map(x=>`<div class="opinion-row"><strong>${x[0]}</strong><span class="opinion-status ${x[2]}">${x[2]==='done'?'✓':'◷'} ${x[1]}</span><button class="text-btn" data-toast="Parecer de ${escape(x[0])} aberto.">Consultar</button></div>`).join('')}</div>`}
-function unitSelector(){return `<section class="panel selector-card"><h2>Entidades das quais pretende parecer</h2><p class="section-copy">Seleccione uma ou várias Unidades Orgânicas. O pedido é entregue à unidade, que decide o encaminhamento interno.</p><div class="unit-grid">${units.map((u,i)=>`<label><input type="checkbox" ${i===0?'checked':''}> <span>${u}</span></label>`).join('')}</div><div class="detail-actions"><button class="primary" data-toast="Pedido de parecer enviado às Unidades Orgânicas seleccionadas.">Solicitar parecer</button></div></section>`}
-function authorizationView(){return header('AUTORIZAÇÕES','Processos aguardando decisão','Consulte os pareceres consolidados e emita o despacho final.')+`<section class="intervention-card">${processSummary()}<div class="intervention-meta"><span><b>Pareceres recebidos</b> 3 de 4</span><span><b>Pendentes</b> Direcção de Finanças</span><span><b>Documentos</b> ${process.documents.length} anexos</span></div>${opinionsTable()}<div class="detail-actions"><button class="secondary" data-toast="Pedido devolvido para esclarecimento.">Devolver</button><button class="secondary" data-toast="Pedido de parecer adicional aberto.">Solicitar parecer adicional</button><button class="secondary" data-toast="Decisão de recusa preparada.">Recusar</button><button class="primary" data-decision>Autorizar</button></div></section>`}
-function openModal(){const docs=process.documents.map(d=>`<li>▤ ${d}</li>`).join('');$('#modalContent').innerHTML=`<button class="modal-close" data-close>×</button><p class="eyebrow">DETALHE DO PROCESSO</p>${processSummary()}<div class="modal-section"><h3>Documentos</h3><ul class="document-list">${docs}</ul></div><div class="modal-section"><h3>Histórico de tramitação</h3>${timeline()}</div>`;$('#modal').classList.add('show')}
-function decisionModal(){$('#modalContent').innerHTML=`<button class="modal-close" data-close>×</button><p class="eyebrow">DECISÃO DO REITOR</p><h2>Autorizar processo</h2><p>Emita o despacho que seguirá pelo Gabinete e pela Secretaria até ao requerente.</p><div class="field"><label>Despacho / decisão</label><textarea rows="5" placeholder="Registe o despacho do Magnífico Reitor..."></textarea></div><div class="upload"><div class="upload-icon">↥</div><div><strong>Anexar documento assinado</strong><p>Opcional para a demonstração.</p></div></div><div class="detail-actions"><button class="primary" data-toast="Despacho emitido. Processo devolvido à Secretaria para notificação.">Emitir despacho</button></div>`;$('#modal').classList.add('show')}
-function closeModal(){$('#modal').classList.remove('show')}; function toast(message){$('#toast').innerHTML=`<span>✓</span><div><strong>${message}</strong><small>Acção simulada no protótipo.</small></div>`;$('#toast').classList.add('show');setTimeout(()=>$('#toast').classList.remove('show'),3400)}
-function bind(){document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{state.view=b.dataset.view;render()});document.querySelectorAll('[data-open-process]').forEach(b=>b.onclick=openModal);document.querySelectorAll('[data-toast]').forEach(b=>b.onclick=()=>toast(b.dataset.toast));document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeModal);const a=$('[data-accept]');if(a)a.onclick=()=>{state.accepted=true;render()};const d=$('[data-decision]');if(d)d.onclick=decisionModal;const f=$('#requestForm');if(f)f.onsubmit=e=>{e.preventDefault();toast(`Protocolo digital ${process.id} registado com sucesso.`);state.view='status';setTimeout(render,600)}} setup();
+const units = [
+  "FACEE",
+  "FCSF",
+  "Faculdade de Direito",
+  "DRH",
+  "Direcção de Finanças",
+  "Outra unidade",
+];
+let state = {
+  profile: "student",
+  view: "dashboard",
+  accepted: false,
+  newStep: "choose",
+};
+const $ = (s) => document.querySelector(s);
+const icon = (id) => `<svg><use href="#${id}"/></svg>`;
+const nav = [
+  ["dashboard", "i-home", "Início"],
+  ["new", "i-plus", "Nova solicitação"],
+  ["requests", "i-folder", "Meus processos"],
+  ["notifications", "i-bell", "Notificações"],
+];
+const active = () => profiles[state.profile];
+const escape = (s) =>
+  s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
+function setup() {
+  const select = $("#profileSelect");
+  select.innerHTML = Object.entries(profiles)
+    .map(([id, p]) => `<option value="${id}">${p.name}</option>`)
+    .join("");
+  select.onchange = (e) => {
+    state.profile = e.target.value;
+    state.view = "dashboard";
+    state.accepted = false;
+    render();
+  };
+  $("#menuBtn").onclick = () => $("#sidebar").classList.toggle("open");
+  $(".modal-backdrop").onclick = closeModal;
+  render();
+}
+function render() {
+  const p = active();
+  $("#profileSelect").value = state.profile;
+  ["sideAvatar", "topAvatar"].forEach(
+    (id) => ($("#" + id).textContent = p.initials),
+  );
+  $("#sideName").textContent = p.name;
+  $("#sideRole").textContent = p.role;
+  $("#sideUnit").textContent = p.unit;
+  renderNav();
+  const crumbs = {
+    dashboard: "Início",
+    new: "Nova solicitação",
+    requests: "Meus processos",
+    notifications: "Notificações",
+    opinions: "Pareceres",
+    authorizations: "Decisões",
+  };
+  $("#pageCrumb").textContent = crumbs[state.view] || "Início";
+  $("#app").innerHTML = views[state.view]();
+  bind();
+}
+function renderNav() {
+  $("#mainNav").innerHTML = nav
+    .map(
+      (n) =>
+        `<button class="nav-item ${state.view === n[0] ? "active" : ""}" data-view="${n[0]}">${icon(n[1])}${n[2]}${n[0] === "notifications" ? '<b class="nav-badge">2</b>' : ""}</button>`,
+    )
+    .join("");
+}
+const header = (eyebrow, title, text, action = "") =>
+  `<div class="page-title"><div><p class="eyebrow">${eyebrow}</p><h1>${title}</h1><p>${text}</p></div>${action}</div>`;
+const status = (label = "Em tramitação", kind = "") =>
+  `<span class="status-pill ${kind}">${label}</span>`;
+const processTop = (showLocation = false) =>
+  `<div class="process-top"><div><span class="process-id">${process.id}</span><h2>${process.subject}</h2><span class="process-meta">${process.applicant} · ${process.date}</span></div>${status(active().level === 1 ? "Em tramitação" : "Em análise")}</div>${showLocation ? `<div class="location"><strong>Actualmente: ${active().level === 1 ? "Gabinete do Reitor" : "FACEE · Chefe de Departamento"}</strong><span>Última actualização: Hoje, 09:42</span></div>` : ""}`;
+const timeline = () => {
+  const steps = [
+    ["Solicitação submetida", "Estudante", "done"],
+    ["Recebida pela Secretaria", "Secretaria da Reitoria", "done"],
+    ["Encaminhada ao Gabinete do Reitor", "Reitoria", "done"],
+    ["Parecer solicitado à FACEE", "Unidade Orgânica", "done"],
+    ["Em análise pela FACEE", "Chefe de Departamento", "current"],
+    ["Parecer recebido", "Retorno pela cadeia hierárquica", ""],
+    ["Decisão do Reitor", "Reitoria", ""],
+    ["Concluído", "Secretaria notificará o requerente", ""],
+  ];
+  return `<div class="timeline">${steps.map(([t, s, c], i) => `<div class="timeline-item ${c}"><span class="timeline-dot">${c === "done" ? "✓" : c === "current" ? "●" : i + 1}</span><div><strong>${t}</strong><small>${s}${c === "current" ? " · Etapa actual" : ""}</small></div></div>`).join("")}</div>`;
+};
+const docs = () =>
+  `<div class="documents"><h3>Documentos</h3>${process.documents.map((d) => `<div class="doc">${icon("i-file")}<span>${d}</span></div>`).join("")}</div>`;
+const opinions = () =>
+  `<div class="opinion-list">${process.opinions.map((x) => `<div class="opinion-row"><strong>${x[0]}</strong><span class="opinion-status ${x[2]}">${x[2] === "done" ? "✓" : "●"} ${x[1]}</span><button class="quiet-btn" data-toast="Parecer de ${escape(x[0])} aberto.">Consultar</button></div>`).join("")}</div>`;
+function studentHome() {
+  return (
+    header(
+      "INÍCIO",
+      "Olá, Estudante",
+      "Acompanhe os seus processos administrativos.",
+      '<button class="primary" data-view="new">+ Nova solicitação</button>',
+    ) +
+    `<p class="section-label">PROCESSO EM DESTAQUE</p><section class="feature-process">${processTop(true)}<div class="feature-footer"><div class="summary"><strong>3 processos no total</strong><span>•</span>1 em tramitação<span>•</span>1 concluído<span>•</span>1 a aguardar</div><button class="quiet-btn" data-open-process>Acompanhar processo →</button></div></section>`
+  );
+}
+function workerHome() {
+  const p = active(),
+    rector = p.level === 3;
+  return (
+    header(
+      rector ? "DECISÕES" : "ÁREA DE TRABALHO",
+      rector
+        ? "Processos aguardando decisão"
+        : "Processos que necessitam da sua intervenção",
+      rector
+        ? "Consulte os pareceres disponíveis e emita o despacho final."
+        : "A sua fila mostra apenas as acções que requerem atenção agora.",
+    ) +
+    `<section class="work-list"><div class="work-row"><span class="process-id">${process.id}</span><p>${process.subject}<br><small>${rector ? "4 pareceres recebidos · Todos os pareceres disponíveis" : "Solicitado pelo Gabinete do Reitor · FACEE"}</small></p><button class="quiet-btn" data-view="${rector ? "authorizations" : "opinions"}">${rector ? "Consultar processo" : p.name.includes("Director") ? "Emitir parecer" : "Analisar"} →</button></div><div class="work-row"><span class="process-id">EXP-2026-00119</span><p>Pedido académico<br><small>Recebido hoje</small></p><button class="quiet-btn" data-toast="Processo de demonstração aberto.">Analisar →</button></div></section>`
+  );
+}
+function requests() {
+  return (
+    header(
+      "PROCESSOS",
+      "Meus processos",
+      "Consulte e acompanhe as solicitações submetidas.",
+      active().level === 1
+        ? '<button class="primary" data-view="new">+ Nova solicitação</button>'
+        : "",
+    ) +
+    `<section class="surface"><div class="toolbar"><input class="search" placeholder="Pesquisar por número ou assunto" aria-label="Pesquisar processos"><div class="filters"><button class="filter active">Todos</button><button class="filter">Em tramitação</button><button class="filter">Concluídos</button><button class="filter">Recusados</button></div></div><div class="process-list"><div class="list-row" data-open-process><span class="process-id">${process.id}</span><div class="list-subject"><strong>${process.subject}</strong><span>${process.date}</span></div>${status("Em tramitação")}<span class="list-date">Gabinete do Reitor</span>${icon("i-chevron")}</div><div class="list-row" data-toast="Processo EXP-2026-00118 aberto."><span class="process-id">EXP-2026-00118</span><div class="list-subject"><strong>Pedido de declaração</strong><span>03 Setembro 2026</span></div>${status("Concluído", "green")}<span class="list-date">Secretaria</span>${icon("i-chevron")}</div></div></section>`
+  );
+}
+function detail() {
+  return `${processTop(true)}<div class="detail-grid"><div><h3>Tramitação</h3>${timeline()}</div><div class="side-stack">${docs()}<details class="history"><summary>Consultar histórico completo</summary><p>10 Set 2026 · 09:42 — Gabinete do Reitor encaminhou o processo para a FACEE.<br>10 Set 2026 · 08:15 — Secretaria registou a solicitação.</p></details></div></div>`;
+}
+function newRequest() {
+  if (state.newStep === "choose")
+    return (
+      header(
+        "NOVA SOLICITAÇÃO",
+        "O que pretende solicitar?",
+        "Escolha um serviço para continuar.",
+      ) +
+      `<section class="service-list">${[
+        ["Exposição / Requerimento", "Dirija um pedido à Reitoria"],
+        ["Pedido de férias", "Solicite um período de férias"],
+        ["Licença / Dispensa", "Submeta o pedido com anexos"],
+        ["Declaração", "Peça uma declaração institucional"],
+        ["Pedido de formação", "Registe o seu pedido de formação"],
+        ["Outro", "Descreva a sua solicitação"],
+      ]
+        .map(
+          (x) =>
+            `<button class="service" data-service><div><strong>${x[0]}</strong><span>${x[1]}</span></div>${icon("i-chevron")}</button>`,
+        )
+        .join("")}</section>`
+    );
+  return (
+    header(
+      "NOVA SOLICITAÇÃO",
+      "Exposição / Requerimento",
+      "Preencha os dados essenciais e anexe os documentos de suporte.",
+    ) +
+    `<section class="form-panel"><div class="form-header"><h2>Dados da solicitação</h2><p>O seu pedido será encaminhado automaticamente para os responsáveis competentes.</p></div><form class="request-form" id="requestForm"><div class="field"><label>Assunto</label><input value="Exposição / Pedido dirigido ao Reitor"></div><div class="field"><label>Exposição</label><textarea rows="6">Exposição dirigida ao Magnífico Reitor.</textarea></div><div class="upload">${icon("i-file")}<span><strong>Documentos comprovativos</strong><br>PDF, JPG ou PNG · Máx. 10 MB por ficheiro</span></div><div class="form-footer"><span>Campos assinalados são obrigatórios.</span><button class="primary">Enviar solicitação</button></div></form></section>`
+  );
+}
+function intervention() {
+  const p = active();
+  if (state.profile === "office") return officeView();
+  const next =
+    {
+      director: "Director Adjunto Pedagógico",
+      deputy: "Chefe de Departamento",
+      chief: "Director do Curso",
+      secretary: "Gabinete do Reitor",
+    }[state.profile] || "Chefe de Departamento";
+  return (
+    header(
+      "PEDIDO DE PARECER",
+      process.id,
+      "Solicitado pelo Gabinete do Reitor · Unidade: FACEE",
+    ) +
+    `<section class="process-detail">${processTop()}<div class="detail-grid"><div><h3>Tramitação interna</h3><div class="internal-chain">${[
+      "Director da Faculdade",
+      "Director Adjunto Pedagógico",
+      "Chefe de Departamento",
+      "Director do Curso",
+    ]
+      .map(
+        (x) =>
+          `<span class="chain-step ${p.name === x ? "current" : ""}">${x}</span><span class="chain-arrow">→</span>`,
+      )
+      .join("")
+      .replace(
+        /<span class="chain-arrow">→<\/span>$/,
+        "",
+      )}</div><div class="notice"><strong>${p.name}</strong> é actualmente responsável. Encaminhe o processo ou emita o parecer conforme a sua competência.</div><div class="action-row"><button class="secondary" data-toast="Processo devolvido para esclarecimento.">Devolver</button><button class="secondary" data-toast="Parecer registado no processo.">Emitir parecer</button><button class="primary" data-toast="Processo encaminhado para ${next}.">Encaminhar</button></div></div><div>${docs()}</div></div></section>`
+  );
+}
+function officeView() {
+  return (
+    header(
+      "GABINETE DO REITOR",
+      "Novo processo recebido",
+      "Faça a triagem e solicite parecer às Unidades Orgânicas necessárias.",
+    ) +
+    `<section class="process-detail">${processTop()}<div class="action-row"><button class="secondary" data-toast="Processo devolvido para esclarecimento.">Devolver / Recusar</button><button class="primary" data-accept>${state.accepted ? "Processo aceite" : "Aceitar processo"}</button></div>${state.accepted ? `<div class="documents"><h3>Solicitar parecer</h3><p class="notice">Seleccione as Unidades Orgânicas. O Gabinete não encaminha directamente a pessoas.</p><div class="internal-chain">${units.map((u, i) => `<label class="chain-step"><input type="checkbox" ${i === 0 ? "checked" : ""}> ${u}</label>`).join("")}</div><button class="primary" data-toast="Pedido de parecer enviado às Unidades seleccionadas.">Solicitar parecer</button></div>` : ""}<div class="documents"><h3>Pareceres solicitados <small>— 3 de 4 recebidos</small></h3>${opinions()}</div></section>`
+  );
+}
+function authorization() {
+  return (
+    header(
+      "DECISÕES",
+      "Processos aguardando decisão",
+      "Todos os pareceres necessários estão disponíveis para consulta.",
+    ) +
+    `<section class="process-detail">${processTop()}<div class="detail-grid"><div><h3>Pareceres solicitados <small>— 3 de 4 recebidos</small></h3>${opinions()}<div class="action-row"><button class="secondary" data-toast="Pedido devolvido para esclarecimento.">Devolver</button><button class="secondary" data-toast="Pedido de parecer adicional aberto.">Solicitar parecer adicional</button><button class="secondary" data-toast="Decisão de recusa preparada.">Recusar</button><button class="primary" data-decision>Autorizar</button></div></div><div>${docs()}<details class="history"><summary>Consultar histórico</summary><p>O processo foi recebido do Gabinete do Reitor e os pareceres foram consolidados por Unidade Orgânica.</p></details></div></div></section>`
+  );
+}
+function notifications() {
+  return (
+    header(
+      "NOTIFICAÇÕES",
+      "Actualizações recentes",
+      "Acompanhe apenas os acontecimentos que exigem a sua atenção.",
+    ) +
+    `<section class="surface"><div class="process-list"><div class="list-row" data-open-process><div class="list-subject"><strong>Novo andamento no processo</strong><span>${process.id} foi encaminhado para a FACEE.</span></div><span class="list-date">Há 10 minutos</span>${icon("i-chevron")}</div><div class="list-row"><div class="list-subject"><strong>Acção necessária</strong><span>O processo ${process.id} aguarda o seu parecer.</span></div><span class="list-date">Hoje, 09:42</span>${icon("i-chevron")}</div></div></section>`
+  );
+}
+const views = {
+  dashboard: () => (active().level === 1 ? studentHome() : workerHome()),
+  new: newRequest,
+  requests,
+  notifications,
+  opinions: intervention,
+  authorizations: authorization,
+};
+function openModal() {
+  $("#modalContent").innerHTML =
+    `<button class="modal-close" data-close>×</button><p class="eyebrow">DETALHE DO PROCESSO</p><h2>${process.id}</h2><p>${process.subject}</p><section class="process-detail">${detail()}</section>`;
+  $("#modal").classList.add("show");
+}
+function decisionModal() {
+  $("#modalContent").innerHTML =
+    `<button class="modal-close" data-close>×</button><p class="eyebrow">DECISÃO DO REITOR</p><h2>Autorizar processo</h2><p>O despacho seguirá para a Secretaria e, depois, para o requerente.</p><div class="field"><label>Despacho / decisão</label><textarea rows="5" placeholder="Registe o despacho do Magnífico Reitor..."></textarea></div><div class="action-row"><button class="primary" data-toast="Despacho emitido. Processo devolvido à Secretaria para notificação.">Emitir despacho</button></div>`;
+  $("#modal").classList.add("show");
+}
+function closeModal() {
+  $("#modal").classList.remove("show");
+}
+function toast(message) {
+  $("#toast").textContent = `✓ ${message}`;
+  $("#toast").classList.add("show");
+  setTimeout(() => $("#toast").classList.remove("show"), 3400);
+}
+function bind() {
+  document.querySelectorAll("[data-view]").forEach(
+    (b) =>
+      (b.onclick = () => {
+        state.view = b.dataset.view;
+        $("#sidebar").classList.remove("open");
+        render();
+      }),
+  );
+  document
+    .querySelectorAll("[data-open-process]")
+    .forEach((b) => (b.onclick = openModal));
+  document
+    .querySelectorAll("[data-toast]")
+    .forEach((b) => (b.onclick = () => toast(b.dataset.toast)));
+  document
+    .querySelectorAll("[data-close]")
+    .forEach((b) => (b.onclick = closeModal));
+  document.querySelectorAll("[data-service]").forEach(
+    (b) =>
+      (b.onclick = () => {
+        state.newStep = "form";
+        render();
+      }),
+  );
+  const a = $("[data-accept]");
+  if (a)
+    a.onclick = () => {
+      state.accepted = true;
+      render();
+    };
+  const d = $("[data-decision]");
+  if (d) d.onclick = decisionModal;
+  const f = $("#requestForm");
+  if (f)
+    f.onsubmit = (e) => {
+      e.preventDefault();
+      toast(`Protocolo digital ${process.id} registado com sucesso.`);
+      state.view = "requests";
+      state.newStep = "choose";
+      setTimeout(render, 600);
+    };
+}
+setup();
